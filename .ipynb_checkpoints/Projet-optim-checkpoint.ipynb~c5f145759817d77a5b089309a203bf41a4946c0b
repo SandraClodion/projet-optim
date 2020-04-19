@@ -4,7 +4,9 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "# MINI-PROJET GROUPE 5 - OPTIMISATION : Trajectoire optimale de course d'un véhicule électrique \n",
+    "# MINI-PROJET GROUPE 5 - OPTIMISATION <br> Trajectoire optimale de course d'un véhicule électrique\n",
+    "\n",
+    "\n",
     "**Emma Bou Hanna, Sandra Clodion**"
    ]
   },
@@ -12,7 +14,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## I/ Modélisation"
+    "## <u>I/ Modélisation</u>"
    ]
   },
   {
@@ -27,7 +29,20 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "**Réponse :**\n"
+    "**Réponse :**\n",
+    "\n",
+    "- Hypothèses: \n",
+    "\n",
+    "    - On suppose que la voiture roule sans glisser sur le sol (bitume sans défaut)\n",
+    "    - les éventuelles pentes du circuit sont d'inclinaison très faibles\n",
+    "    - Les frottements fluides sont quadratiques au vu des dimensions de la voiture\n",
+    "    - La vitesse est bornée inférieurement et supérieurement\n",
+    "    \n",
+    "    \n",
+    "- Simplification du problème:\n",
+    "\n",
+    "On considère uniquement l'optimisation du profil de vitesse lors d'un tour car lorsque l'on effectue un bilan de puissance, on se rend compte que ce sont les mêmes forces qui interviennent à chaque tour et les mêmes grandeurs qui sont en jeu. Le problème est donc fortement similaire à chaque tour. Ainsi, les conditions sur la vitesse que nous trouverons dans le cadre d'une résolution du problème sur un tour s'appliqueront pour les autres tours de la même façon.\n",
+    "   "
    ]
   },
   {
@@ -60,28 +75,38 @@
     "   \n",
     "   En multipliant chaque membre de l'équation (3) par $I_{m}(t)$, on obtient l'équation suivante :\n",
     "     $$  R_{m}I_{m}(t)^{2}  =  U_{m}(t)I_{m}(t) - \\kappa I_{m}(t) \\omega(t)$$\n",
-    "     qu'on peut réécrire :\n",
-    "     $$ \\mathcal{P}_{e}(t) = \\frac{R_{m}}{\\kappa ^{2}}T(t)^{2} + T(t) \\omega(t) \\quad (4) $$\n",
+    "     On remarque que la puissance électrique fournie par le moteur est en partie perdue par effet Joule ($R_{m}I_{m}(t)^{2}$) et en partie convertie en puissance mécanique ($\\kappa I_{m}(t) \\omega(t)$).\n",
+    "     \n",
+    "     On peut alors réécrire l'équation précédente uniquement en fonction de $u$ et de $w$:\n",
+    "     $$ \\boxed{\\mathcal{P}_{e}(t) = \\frac{R_{m}}{\\kappa ^{2}}(\\tau u(t))^{2} + \\tau u(t) \\omega(t)} \\quad (4) $$\n",
     "     où $ \\mathcal{P}_{e}(t) = U_{m}(t)I_{m}(t)$ est la puissance d'entrée du moteur\n",
     "\n",
     "\n",
     "* On veut minimiser l'énergie perdue par le véhicule pendant un tour, c'est-à-dire qu'on veut minimiser $ -\\Delta E_{c} $\n",
-    "<br>D'après le théorème de l'énergie cinétique appliqué dans le référentiel lié au sol, $ \\Delta E_{c} = \\mathcal{P}(\\overrightarrow{actions  \\, extérieures}) + \\mathcal{P}(\\overrightarrow{actions \\, intérieures})$\n",
+    "<br>D'après le théorème de l'énergie cinétique appliqué dans le référentiel lié au sol, $ \\Delta E_{c} = \\int_{t_{0}}^{t_f} (\\mathcal{P}(\\overrightarrow{actions  \\, extérieures}) + \\mathcal{P}(\\overrightarrow{actions \\, intérieures})) \\: dt$\n",
     "<br>Ici, parmi les actions extérieures au système : \n",
-    "    * le poids est orthogonal au vecteur vitesse et a donc une puissance nulle\n",
-    "    * la puissance de la réaction du sol est nulle d'après l'hypothèse de non-glissemant de la roue\n",
+    "    * le poids est environ orthogonal au vecteur vitesse et a donc une puissance nulle (car on considère des inclinaisons de pente très faibles).\n",
+    "    * la puissance de la réaction du sol est nulle d'après l'hypothèse de non-glissement de la roue\n",
     "    * la puissance de la force de frottement due à l'air vaut $ - \\alpha \\int_{t_{0}}^{t_{f}} v(t)^{3} dt $\n",
     "   \n",
     "\n",
     "* Le problème d'optimisation qu'on cherche à résoudre est donc le suivant :\n",
-    "$$ \\boxed{\\underset{l(t_{f}) = L\n",
-    "\\\\ \\mathcal{P}_{e}(t) = \\frac{R_{m}}{\\kappa ^{2}}T(t)^{2} + T(t) \\omega(t)\n",
-    "\\\\ v_{min} \\leq v(t) \\leq v_{max}}\n",
-    "{\\min \\: f(v(t))}}$$\n",
+    "$$ \\boxed{\\underset{\n",
+    "\\\\l(t_{f}) = L\n",
+    "\\\\ 0 \\leq u(t) \\leq 1\n",
+    "\\\\ v_{min} \\leq v(t) \\leq v_{max}\n",
+    "\\\\\\mathcal{P}_{0} = \\frac{R_{m}}{\\kappa ^{2}}(\\tau u(t_{0}))^{2} + \\tau u(t_{0}) \\omega(t_{0})}\n",
+    "{\\min \\: f(v(t), u(t), w(t))}}$$\n",
     "où :\n",
-    "    * la variable de décision est la fonction $\\boxed{v: [t_{0}, t_{f}] \\rightarrow \\mathbb{R}}$ \n",
-    "    * $\\boxed{f(v(t)) =  \\int_{t_{0}}^{t_{f}} (\\alpha v(t)^{3} - \\mathcal{P}_{e}(t)) \\: dt}$ \n",
-    "    * $L$ est la longueur totale de la piste"
+    "    * les variables de décision sont pour l'instant les fonctions $\\boxed{v: [t_{0}, t_{f}] \\rightarrow \\mathbb{R}}$, $\\boxed{w: [t_{0}, t_{f}] \\rightarrow \\mathbb{R}}$ et $\\boxed{u: [t_{0}, t_{f}] \\rightarrow [0,1]}$\n",
+    "    * $f(v(t), u(t), w(t)) =  \\int_{t_{0}}^{t_{f}} (\\alpha v(t)^{3} - \\mathcal{P}_{e}(t) ) \\: dt$ que l'on peut réécrire de la façon suivante :\n",
+    "    $$\\boxed{f(v(t), u(t), w(t)) =  \\int_{t_{0}}^{t_{f}} (\\alpha v(t)^{3} - \\frac{R_{m}}{\\kappa ^{2}}(\\tau u(t))^{2} - \\tau u(t) \\omega(t)) \\: dt}$$\n",
+    "    * $L$ est la longueur totale de la piste\n",
+    "    * $t_{0}$ est l'instant où le véhicule démarre son tour de piste\n",
+    "    * $t_{f}$ est l'instant où le véhicule a fait le tour de la piste (il est revenu à son point de départ)\n",
+    "    * $\\mathcal{P}_{0}$ est la puissance électrique initiale\n",
+    "    \n",
+    "Par la suite, on va essayer de trouver des relations reliant $v(t)$, $w(t)$ et $u(t)$ pour se ramener à une seule variable de décision dans le problème continu. Ce dernier sera ainsi piloté par $u$."
    ]
   },
   {
@@ -109,7 +134,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 4,
    "metadata": {},
    "outputs": [
     {
@@ -119,7 +144,7 @@
        "<IPython.core.display.Image object>"
       ]
      },
-     "execution_count": 6,
+     "execution_count": 4,
      "metadata": {
       "image/jpeg": {
        "width": 400
@@ -130,7 +155,7 @@
    ],
    "source": [
     "from IPython.display import Image\n",
-    "Image(filename = \"projet/schema.jpeg\", width=400)"
+    "Image(filename = \"schema.jpeg\", width=400)"
    ]
   },
   {
@@ -155,9 +180,14 @@
     "<br>On note **$r$ le rapport de transmission du moteur**, c'est-à-dire $ r = \\frac{\\omega_{1}(t)}{\\omega(t)} $\n",
     "<br>Dans le cas d'un moteur de voiture, on a $r < 1$\n",
     "\n",
+    "\n",
     "* Ainsi, on obtient une relation simple entre la vitesse de rotation du rotor et la vitesse de déplacement du véhicule :\n",
     "\n",
-    "$$ \\boxed{v(t) = a r \\omega(t)} $$"
+    "$$ \\boxed{v(t) = a r \\omega(t)} $$\n",
+    "\n",
+    "Cette relation entre $w(t)$ et $v(t)$ nous permet de simplifier l'écriture de la fonction f :\n",
+    "\n",
+    "$$f(v(t), u(t)) =  \\int_{t_{0}}^{t_{f}} (\\alpha v(t)^{3} - \\frac{R_{m}}{\\kappa ^{2}}(\\tau u(t))^{2} - \\tau u(t) \\frac{1}{ar}v(t)) \\: dt$$"
    ]
   },
   {
@@ -182,17 +212,21 @@
     "\n",
     "* <u> Bilan des forces </u> : \n",
     "    * le poids $\\overrightarrow{P}$\n",
-    "    * la réaction de contact sur chacune des roues, qu'on peut décomposer comme la somme d'une réaction normale et d'une réaction tangentielle $\\overrightarrow{R_{Ci}(t)} = \\overrightarrow{R_{Ni}} + \\overrightarrow{R_{Ti}(t)}$ (pour chacune des roues $i$)\n",
+    "    * la réaction de contact sur chacune des roues, qu'on peut décomposer comme la somme d'une réaction normale à la route et d'une réaction tangentielle $\\overrightarrow{R_{Ci}(t)} = \\overrightarrow{R_{Ni}} + \\overrightarrow{R_{Ti}(t)}$ (pour chacune des roues $i$)\n",
     "    * la force de frottement fluide due à l'air $\\overrightarrow{F_{air}}=-\\alpha \\left\\|v(t)\\right\\|\\overrightarrow{v(t)} $\n",
     "\n",
-    "Le poids et les réactions normales étant les seules forces normales à la piste, et étant donné qu'on suppose que les roues sont toujours en contact avec la piste, ces forces se compensent.\n",
-    "En revanche, $\\overrightarrow{F_{air}}$ et les $\\overrightarrow{R_{Ti}(t)}$ sont colinéaires à $\\overrightarrow{v(t)}$\n",
+    "$\\overrightarrow{F_{air}}$ et les $\\overrightarrow{R_{Ti}(t)}$ sont colinéaires à $\\overrightarrow{v(t)}$\n",
     "\n",
     "On note $\\overrightarrow{R_{T}} = R_{T} \\frac{\\overrightarrow{v(t)}}{\\left\\|v(t)\\right\\|}$ la résultante des réactions tangentielles\n",
     "\n",
-    "En appliquant le principe fondamental de la dynamique en utilisant l'abscisse curviligne, on obtient :\n",
-    "$$ m \\frac{dv}{dt} = - \\alpha v^{2} + R_{T}(t) \\quad (5)$$\n",
+    "On note $\\theta$ l'angle algébrique entre l'axe y du repère lié au sol et la normale à la route\n",
+    "\n",
+    "En appliquant le principe fondamental de la dynamique et en le projetant sur le vecteur $\\frac{\\overrightarrow{v(t)}}{\\left\\|v(t)\\right\\|}$ , on obtient :\n",
+    "$$m \\frac{dv}{dt} = - \\alpha v^{2} + R_{T}(t) - mg\\sin{\\theta}$$\n",
     "<br> où $v$ désigne $\\left\\|v(t)\\right\\|$\n",
+    "\n",
+    "On fait l'hypothèse que les inclinaisons des pentes sont faibles sur la piste et au premier ordre on a donc l'équation suivante :\n",
+    "$$m \\frac{dv}{dt} = - \\alpha v^{2} + R_{T}(t)  \\quad (5)$$\n",
     "\n",
     "En multipliant chaque membre de l'équation $(5)$ par $v$, on obtient :\n",
     "$$ \\frac{dE_{c}}{dt} = - \\alpha v^{3} + R_{T}(t)v(t) $$\n",
@@ -207,13 +241,12 @@
     "$$ R_{T}(t) = \\frac{R_{m}}{\\kappa ^{2}v(t)}T(t)^{2} + \\frac{1}{a r}T(t) $$\n",
     "\n",
     "Enfin, dans l'équation $(5)$, on remplace $R_{T}$ par son expression qu'on vient de trouver, ce qui nous donne l'équation de mouvement du véhicule :\n",
-    "$$ \\boxed{ m \\frac{dv}{dt} = - \\alpha v^{2} + \\frac{R_{m}}{\\kappa ^{2}v(t)}T(t)^{2} + \\frac{1}{a r}T(t)} $$\n",
+    "$$ m \\frac{dv}{dt} = - \\alpha v^{2} + \\frac{R_{m}}{\\kappa ^{2}v(t)}T(t)^{2} + \\frac{1}{a r}T(t) $$\n",
+    "qu'on peut réécrire en fonction de $u(t)$ :\n",
     "\n",
-    "Le problème d'optimisation devient donc : \n",
-    "$$ \\boxed{\\underset{l(t_{f}) = L\n",
-    "\\\\ v_{min} \\leq v(t) \\leq v_{max}\n",
-    "\\\\m \\frac{dv}{dt} = - \\alpha v^{2} + \\frac{R_{m}}{\\kappa ^{2}v(t)}T(t)^{2} + \\frac{1}{a r}T(t)}\n",
-    "{\\min \\: f(v(t))}}$$\n"
+    "$$ \\boxed{ m \\frac{dv}{dt} = - \\alpha v^{2} + \\frac{R_{m}}{\\kappa ^{2}v(t)}(\\tau u(t))^{2} + \\frac{1}{a r}\\tau u(t)}\\quad (6) $$\n",
+    "\n",
+    "On a ainsi établi une relation entre $v(t)$ et $u(t)$."
    ]
   },
   {
@@ -222,7 +255,7 @@
    "source": [
     "### Question 5\n",
     "On introduit $n$ points de passage équidistants sur le plan de course et on s'intéresse aux temps de passage par ces points. Discrétiser le problème pour le mettre sous la forme\n",
-    "$$\\underset{x \\in \\mathbb{R}^{n}\\\\ c(x) \\leq 0}{\\min \\: f(x)}$$\n",
+    "$$\\underset{x \\in \\mathbb{R}^{2n}\\\\ c(x) \\leq 0}{\\min \\: f(x)}$$\n",
     "On précisera les variables de décision, les contraintes (au nombre de trois) ainsi que la fonction objectif $f$ à minimiser\n"
    ]
   },
@@ -232,25 +265,200 @@
    "source": [
     "**Réponse:**\n",
     "\n",
-    "On note $(t_{1}, ..., t_{n})$ les temps d'arrivée respectifs aux points de passages $(x_{1}, ..., x_{n})$\n",
+    "On note $(t_{1}, ..., t_{n}, t_{n+1})$ les temps d'arrivée respectifs aux $n$ points de passages, avec $t_1$ le point tel que $l(t_1) = 0$, et $t_{n+1}$ le point tel que $l(t_1) = L$ (le véhicule a fait un tour complet), où l(t) correspond à la position de la voiture à l'instant $t$ \n",
+    "(Si on considère plusieurs tours, le $t_1$ d'un tour correspond au $t_{n+1}$ du tour précédent)\n",
+    "<br>On note $(u_{1}, ..., u_{n})$ les pilotages du couple moteur correspondant à chacun des instants $(t_{1}, ..., t_{n})$    \n",
     "\n",
-    "On doit alors avoir :\n",
-    "$$l(t_{i})   =   i \\times \\frac{L}{n}$$"
+    "\n",
+    "On va discrétiser la fonction $f$. Pour cela, on commence par trouver une expression de $f$ en fonction des $u(t_{i})$ et des $v(t_{i})$\n",
+    "\n",
+    "\n",
+    "- On a d'une part : $$f(v(t),u(t)) =  \\sum_{i=1}^{n-1} (\\int_{t_{i}}^{t_{i+1}} (\\alpha v(t)^{3} - \\mathcal{P}_{e}(t)) \\: dt)$$ À l'aide d'un développement limité, on en déduit une expression approchée de $f$ à l'ordre 1 : $$  f(v(t),u(t)) = \\sum_{i=1}^{n} (\\alpha v(t_{i})^{3} - \\mathcal{P}_{e}(t_{i}) ) \\times (t_{i+1} - t_{i})$$\n",
+    "\n",
+    "\n",
+    "- D'autre part, discrétisons l'équation $(6)$ évaluée en $t_i$ pour $i \\in [\\![1,n]\\!]$ :\n",
+    "\n",
+    "    Au premier ordre, par méthode des différences finies, on a : $\\frac{dv}{dt} (t_i) = \\frac{v(t_{i+1}) - v(t_{i})}{t_{i+1} - t_{i}}$\n",
+    "    On obtient ainsi une relation de récurrence au premier ordre de la vitesse, exprimée en fonction de $u$: \n",
+    "$$ v(t_i+1) = v(t_{i}) + [\\frac{1}{ra} \\tau u(t_{i}) - \\alpha v(t_{i})^2 + \\frac {R_m}{\\kappa^2 v(t_{i})} \\tau^2 u(t_{i})^2] \\times \\frac{(t_{i+1} - t_{i})}{m}$$\n",
+    "\n",
+    "- Enfin, on reprend la relation $(4)$ et on en déduit :\n",
+    "\n",
+    "$$ \\mathcal{P}_{e}(t_i) = \\frac{R_{m}}{\\kappa ^{2}}(\\tau u(t_i))^{2} + \\tau u(t_i) \\times \\frac{v(t_i)}{ra} \\quad\n",
+    "$$\n",
+    "- On peut ainsi modifier l'expression approchée de f à l'ordre 1 :\n",
+    "$$f(v(t),u(t)) = \\sum_{i=1}^{n}(\\alpha v(t_{i})^{3} - \\frac{R_{m}}{\\kappa^{2}}(\\tau u(t_{i}))^{2} - \\tau u(t_{i}) \\frac{v(t_{i})}{ra} ) \\times (t_{i+1} - t_{i})$$"
    ]
   },
   {
-   "cell_type": "code",
-   "execution_count": null,
+   "cell_type": "markdown",
    "metadata": {},
-   "outputs": [],
-   "source": []
+   "source": [
+    "On va maintenant essayer d'exprimer les $v(t_i)$ en fonction des $u_i$ et des $t_i$\n",
+    "\n",
+    "- On choisit des points <b>équidistants</b>, on doit donc avoir :\n",
+    "$$l(t_{i})   =   (i-1) \\times \\frac{L}{n}$$\n",
+    "Cela peut se reformuler de la manière suivante : \n",
+    "$$ \\forall i \\in [\\![1,n]\\!], \\quad l(t_{i+1}) - l(t_{i})= \\frac{L}{n}$$\n",
+    "\n",
+    "- Par différence finie, on peut donner une approximation au premier ordre de $v(t_i)$ à partir de $t_i$, $t_{i+1}$, et les positions à ces temps de passage :\n",
+    "\n",
+    "    $$v(t_i)=\\frac{l(t_{i+1})-l(t_i)}{t_{i+1}-t_i}$$\n",
+    "\n",
+    "    En utilisant le fait que les points de passages sont équidistants, on en déduit :\n",
+    "$$ v(t_i)=\\frac{L}{n(t_{i+1}-t_i)}$$\n",
+    "\n",
+    "    On introduit les variables $s_{i}$ telles que : \n",
+    "$${s_{i} = t_{i + 1} - t_{i} \\quad \\forall i \\in [\\![1,n]\\!]}$$\n",
+    "\n",
+    "    Ainsi, on peut réécrire les $v(t_i)$:\n",
+    "$$v(t_i) = \\frac{L}{ns_i}$$\n",
+    "\n",
+    "\n",
+    "   \n",
+    "On peut ainsi donner une version discrétisée de la fonction f, en écrivant :\n",
+    "   $$f(x) = \\sum_{i=1}^{n}(\\alpha (\\frac{L}{ns_i})^{3} - \\frac{R_{m}}{\\kappa^{2}}(\\tau u_{i})^{2} - \\tau u_{i} \\frac{L}{nras_i})s_i $$ \n",
+    "qu'on peut simplifier :\n",
+    "$$\\boxed{f(x) = \\sum_{i=1}^{n}\\alpha (\\frac{L^{3}}{n^{3}s_i^{2}}) - \\frac{R_{m}}{\\kappa^{2}}(\\tau u_{i})^{2} - \\tau u_{i} \\frac{L}{nra}} $$ \n",
+    "   où $ x = \\begin{pmatrix}s_1 \\\\ \\vdots \\\\ s_n \\\\u_1 \\\\ \\vdots \\\\u_n\\end{pmatrix}$, ce qui nous permet d'avoir pour notre problème de minimisation d'avoir un vecteur et non plus des fonctions comme variable de décision de notre problème de minimisation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Les contraintes du problème d'optimisation peuvent également être réécrites en fonction des $u_i$ et des $s_i$\n",
+    "\n",
+    "\n",
+    "* La contrainte $v_{min}\\leq v(t_i) \\leq v_{max} \\; \\forall i \\in [\\![1,n]\\!]$ peut être réécrite :\n",
+    "$$v_{min}\\leq \\frac{L}{ns_i} \\leq v_{max} \\; \\forall i \\in [\\![1,n]\\!]$$\n",
+    "ou encore\n",
+    "$$\\frac{L}{nv_{max}} \\leq s_i \\leq \\frac{L}{nv_{min}}  \\; \\forall i \\in [\\![1,n]\\!]$$\n",
+    "\n",
+    "\n",
+    "* La contrainte $0 \\leq u(t_i) \\leq 1 \\; \\forall i \\in [\\![1,n]\\!]$ peut être réécrite :\n",
+    "$$0 \\leq u_i\\leq 1 \\; \\forall i \\in [\\![1,n]\\!]$$\n",
+    "\n",
+    "\n",
+    "* La contrainte portant sur la puissance électrique initiale $\\mathcal{P}_{e}(t_1) = \\frac{R_{m}}{\\kappa ^{2}}(\\tau u(t_1))^{2} + \\tau (u(t_1) \\omega(t_1)$ peut être réécrite :\n",
+    "$$ \\mathcal{P}_{e}(t_1) = \\frac{R_{m}}{\\kappa ^{2}}(\\tau u_1)^{2} + \\tau u_1 \\frac{L}{arns_1}$$\n",
+    "Lors du premier tour, $\\mathcal{P}_{e}(t_1)$ est égal à $\\mathcal{P}_{0}$ la puissance électrique fournie au moteur.\n",
+    "\n",
+    "OU BIEN ???\n",
+    "\n",
+    "* La contrainte liée à l'équation du mouvement $ v(t_{i+1}) = v(t_{i}) + [\\frac{1}{ra} \\tau u(t_{i}) - \\alpha v(t_{i})^2 + \\frac {R_m}{\\kappa^2 v(t_{i})} \\tau^2 u(t_{i})^2] \\times \\frac{(t_{i+1} - t_{i})}{m}$ peut s'écrire :\n",
+    "\n",
+    "$$ \\frac{L}{ns_{i+1}} = \\frac{L}{ns_i} + [\\frac{1}{ra} \\tau u_{i} - \\alpha (\\frac{L}{ns_i})^2 + \\frac {nR_ms_i}{\\kappa^2 L} \\tau^2 u_{i}^2] \\times \\frac{s_i}{m} \\; \\forall i \\in [\\![1,n-1]\\!]$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Le problème d'optimisation devient donc: \n",
+    "$$\\underset{ x \\in \\mathbb{R}^{2n}\n",
+    "\\\\ \\mathcal{P}(t_{1}) = \\frac{R_{m}}{\\kappa ^{2}}(\\tau u_{1})^{2} + \\tau u_{1} \\frac{L}{arns_i} \n",
+    "\\\\ v_{min}\\leq \\frac{L}{ns_i} \\leq v_{max} \\; \\forall i \\in [\\![1,n]\\!]\n",
+    "\\\\  0\\leq u_i\\leq 1  \\; \\forall i \\in [\\![1,n]\\!] }\n",
+    "{\\min \\: f(x)}$$\n",
+    "\n",
+    "où $f(x) = \\sum_{i=1}^{n}\\alpha ((\\frac{L}{n})^{3} \\frac{1}{s_i^{2}}) - \\frac{R_{m}}{\\kappa^{2}}(\\tau u_{i})^{2} - \\tau u_{i} \\frac{L}{nra}$\n",
+    "\n",
+    "On peut le réécrire, plus formellement, de la façon suivante :\n",
+    "\n",
+    "$$ \\boxed{\\underset{ x \\in \\mathbb{R}^{2n}\n",
+    "\\\\ \\mathcal{P}_{e}(t_{1}) - \\frac{R_{m}}{\\kappa ^{2}}(\\tau u_{1})^{2} - \\tau u_{1} \\frac{L}{arns_i} \\;=\\; 0 \n",
+    "\\\\ \\frac{L}{nv_{max}} - s_i \\; \\leq \\; 0  \\; \\forall i \\in [\\![1,n]\\!]\n",
+    "\\\\ s_i - \\frac{L}{nv_{min}} \\; \\leq \\; 0  \\; \\forall i \\in [\\![1,n]\\!]\n",
+    "\\\\ - u_i \\; \\leq \\; 0  \\; \\forall i \\in [\\![1,n]\\!]\n",
+    "\\\\ u_i - 1 \\; \\leq \\; 0  \\; \\forall i \\in [\\![1,n]\\!]}\n",
+    "{\\min \\: f(x)} }$$\n",
+    "\n",
+    "\n",
+    "\n",
+    "On remarque que la première contrainte est active.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Données nécessaires à la résolution\n",
+    "\n",
+    "\n",
+    "Pour pouvoir résoudre ce problème d'optimisation sous contraintes, nous avons besoin de :\n",
+    "\n",
+    "- la masse de la voiture $m$\n",
+    "- l'expression analytique de l'abscisse curviligne du circuit\n",
+    "- le couple moteur maximal $\\tau$\n",
+    "- la puissance électrique initiale $\\mathcal{P}_{0}$\n",
+    "- (la vitesse initiale $v_{0}$) (oui si contrainte mouvement, non si contrainte puissance)\n",
+    "- le coefficient de frottements fluides $\\alpha$\n",
+    "- la longueur totale du circuit $L$\n",
+    "- les valeurs de $R_m$ et $\\kappa$\n",
+    "- le rayon d'une roue $a$\n",
+    "- le rapport de transmission $r$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## <u>II/ Étude et résolution numérique</u>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Question 1\n",
+    "Étudier le problème (convexité, conditionnement, existence et unicité d'une solution) par la méthode, analytique ou numérique, de votre choix. Proposer une méthode de résolution adaptée aux caractéristiques du problème."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Question 2\n",
+    "Proposer des ordres de grandeur qui vous semblent raisonnables pour les différentes variables du problème et développer un algorithme de résolution. Commenter les résultats obtenus."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## <u>III/ Étude avancée</u>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "On souhaite prendre en compte les non-linéarités du moteur et en particulier les saturations de la tension pour les faibles et basses valeurs de couple moteur."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Question 1\n",
+    "Modifier le problème donné en annexe en conséquence. Quelles sont les conséquences de ces saturations sur le problème de minimisation ?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Question 2\n",
+    "Proposer un algorithme permettant de traiter ce nouveau problème et de l'implémenter."
+   ]
   }
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Python 3.7.3 64-bit ('base': conda)",
+   "display_name": "Python 3",
    "language": "python",
-   "name": "python37364bitbaseconda108dc5d651b947a2ba88716975a93f07"
+   "name": "python3"
   },
   "language_info": {
    "codemirror_mode": {
